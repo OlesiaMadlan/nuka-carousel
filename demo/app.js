@@ -8,11 +8,11 @@ class App extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      slideIndex: 5,
+      slideIndex: 0,
       length: 6,
-      wrapAround: false,
+      wrapAround: true,
       underlineHeader: false,
-      slidesToShow: 1.0,
+      slidesToShow: 1,
       cellAlign: 'left',
       transitionMode: 'scroll'
     };
@@ -33,19 +33,6 @@ class App extends React.Component {
           slidesToShow={this.state.slidesToShow}
           wrapAround={this.state.wrapAround}
           slideIndex={this.state.slideIndex}
-          renderTopCenterControls={({ currentSlide }) => (
-            <div
-              style={{
-                fontFamily: 'Helvetica',
-                color: '#fff',
-                textDecoration: this.state.underlineHeader
-                  ? 'underline'
-                  : 'none'
-              }}
-            >
-              Nuka Carousel: Slide {currentSlide + 1}
-            </div>
-          )}
         >
           {colors.slice(0, this.state.length).map((color, index) => (
             <img
@@ -55,7 +42,7 @@ class App extends React.Component {
             />
           ))}
         </Carousel>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div>
           <div>
             <button onClick={() => this.setState({ slideIndex: 0 })}>1</button>
             <button onClick={() => this.setState({ slideIndex: 1 })}>2</button>
@@ -110,17 +97,7 @@ class App extends React.Component {
                 </button>
               </div>
             )}
-            <div style={{ marginLeft: 'auto' }}>
-              <button
-                onClick={() =>
-                  this.setState({
-                    slidesToShow: this.state.slidesToShow > 1.0 ? 1.0 : 1.25
-                  })
-                }
-              >
-                Toggle Partially Visible Slides
-              </button>
-            </div>
+
           </div>
         )}
       </div>
