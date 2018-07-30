@@ -8,7 +8,7 @@ class App extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      slideIndex: 0,
+      slideIndex: 5,
       length: 6,
       wrapAround: false,
       underlineHeader: false,
@@ -26,7 +26,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div style={{ width: '50%', margin: 'auto' }}>
+      <div style={{ width: '100%', margin: 'auto' }}>
         <Carousel
           transitionMode={this.state.transitionMode}
           cellAlign={this.state.cellAlign}
@@ -47,16 +47,13 @@ class App extends React.Component {
             </div>
           )}
         >
-          {colors
-            .slice(0, this.state.length)
-            .map((color, index) => (
-              <img
-                src={`http://placehold.it/1000x400/${color}/ffffff/&text=slide${index +
-                  1}`}
-                key={color}
-                onClick={this.handleImageClick}
-              />
-            ))}
+          {colors.slice(0, this.state.length).map((color, index) => (
+            <img
+              src={`http://placehold.it/400x400/${color}/ffffff/&text=slide ${index}`}
+              key={color}
+              onClick={this.handleImageClick}
+            />
+          ))}
         </Carousel>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
