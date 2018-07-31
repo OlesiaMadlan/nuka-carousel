@@ -10,11 +10,7 @@ class App extends React.Component {
     this.state = {
       slideIndex: 0,
       length: 6,
-      wrapAround: true,
-      underlineHeader: false,
-      slidesToShow: 1,
-      cellAlign: 'left',
-      transitionMode: 'scroll'
+      cellAlign: 'left'
     };
 
     this.handleImageClick = this.handleImageClick.bind(this);
@@ -23,6 +19,17 @@ class App extends React.Component {
   handleImageClick() {
     this.setState({ underlineHeader: !this.state.underlineHeader });
   }
+
+    handleSlideIndexUpdate = index => {
+    console.log('update', index);
+    this.setState({ slideIndex: index });
+
+    this.setState({ cellAlign: index > 0 ? 'center' : 'left' });
+  };
+
+  handleAfterSlide = index => {
+    console.log('after callback', index);
+  };
 
   render() {
     return (
@@ -33,73 +40,34 @@ class App extends React.Component {
           slidesToShow={this.state.slidesToShow}
           wrapAround={this.state.wrapAround}
           slideIndex={this.state.slideIndex}
+          slideWidth="280px"
+          renderCenterLeftControls={() => null}
+          renderCenterRightControls={() => null}
+          onSlideIndexUpdate={this.handleSlideIndexUpdate}
+          afterSlide={this.handleAfterSlide}
         >
           {colors.slice(0, this.state.length).map((color, index) => (
-            <img
-              src={`http://placehold.it/400x400/${color}/ffffff/&text=slide ${index}`}
-              key={color}
-              onClick={this.handleImageClick}
-            />
+            <div key={index} style={{ overflow: 'hidden' }}>
+              <img
+                src={`http://placehold.it/400x400/${color}/ffffff/&text=slide ${index}`}
+                key={color}
+                onClick={() => this.handleSlideIndexUpdate(index)}
+              />
+            </div>
           ))}
         </Carousel>
         <div>
           <div>
-            <button onClick={() => this.setState({ slideIndex: 0 })}>1</button>
-            <button onClick={() => this.setState({ slideIndex: 1 })}>2</button>
-            <button onClick={() => this.setState({ slideIndex: 2 })}>3</button>
-            <button onClick={() => this.setState({ slideIndex: 3 })}>4</button>
-            <button onClick={() => this.setState({ slideIndex: 4 })}>5</button>
-            <button onClick={() => this.setState({ slideIndex: 5 })}>6</button>
-          </div>
-          <div>
-            <button
-              onClick={() =>
-                this.setState({
-                  length: 2
-                })
-              }
-            >
-              2 Slides Only
-            </button>
-            <button
-              onClick={() =>
-                this.setState({
-                  transitionMode:
-                    this.state.transitionMode === 'fade' ? 'scroll' : 'fade'
-                })
-              }
-            >
-              Toggle Fade {this.state.transitionMode === 'fade' ? 'Off' : 'On'}
-            </button>
-            <button
-              onClick={() =>
-                this.setState(prevState => ({
-                  wrapAround: !prevState.wrapAround
-                }))
-              }
-            >
-              Toggle Wrap Around
-            </button>
+            {[...new Array(6).values()].map((item, index) => (
+              <button
+                key={index}
+                onClick={() => this.handleSlideIndexUpdate(index)}
+              >
+                {index}
+              </button>
+            ))}
           </div>
         </div>
-        {this.state.transitionMode !== 'fade' && (
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            {this.state.slidesToShow > 1.0 && (
-              <div>
-                <button onClick={() => this.setState({ cellAlign: 'left' })}>
-                  Left
-                </button>
-                <button onClick={() => this.setState({ cellAlign: 'center' })}>
-                  Center
-                </button>
-                <button onClick={() => this.setState({ cellAlign: 'right' })}>
-                  Right
-                </button>
-              </div>
-            )}
-
-          </div>
-        )}
       </div>
     );
   }

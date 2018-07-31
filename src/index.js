@@ -62,7 +62,6 @@ export default class Carousel extends React.Component {
     ]);
 
     this.state = {
-      currentSlide: this.props.slideIndex,
       dragging: false,
       frameWidth: 0,
       left: 0,
@@ -126,8 +125,8 @@ export default class Carousel extends React.Component {
     const slideCountChanged = slideCount !== this.state.slideCount;
 
     this.setState({ slideCount });
-    if (slideCount <= this.state.currentSlide) {
-      this.goToSlide(Math.max(slideCount - 1, 0));
+    if (slideCount <= this.props.slideIndex) {
+      //this.goToSlide(Math.max(slideCount - 1, 0));
     }
 
     const updateDimensions =
@@ -161,7 +160,7 @@ export default class Carousel extends React.Component {
 
     if (
       this.props.slideIndex !== nextProps.slideIndex &&
-      nextProps.slideIndex !== this.state.currentSlide &&
+      nextProps.slideIndex !== this.props.slideIndex &&
       !this.state.isWrappingAround
     ) {
       this.goToSlide(nextProps.slideIndex);
@@ -413,22 +412,24 @@ export default class Carousel extends React.Component {
     if (this.touchObject.length > this.state.slideWidth / slidesToShow / 5) {
       if (this.touchObject.direction === 1) {
         if (
-          this.state.currentSlide >= this.state.slideCount - slidesToShow &&
+          this.props.slideIndex >= this.state.slideCount - slidesToShow &&
           !this.props.wrapAround
         ) {
           this.setState({ easing: easing[this.props.edgeEasing] });
         } else {
-          this.nextSlide();
+          this.props.onSlideIndexUpdate(this.props.slideIndex + 1);
         }
       } else if (this.touchObject.direction === -1) {
-        if (this.state.currentSlide <= 0 && !this.props.wrapAround) {
+        if (this.props.slideIndex <= 0 && !this.props.wrapAround) {
           this.setState({ easing: easing[this.props.edgeEasing] });
         } else {
-          this.previousSlide();
+          //this.previousSlide();
+          this.props.onSlideIndexUpdate(this.props.slideIndex - 1);
         }
       }
     } else {
-      this.goToSlide(this.state.currentSlide);
+      //this.goToSlide(this.props.slideIndex);
+      this.props.onSlideIndexUpdate(this.props.slideIndex);
     }
 
     this.touchObject = {};
@@ -442,7 +443,7 @@ export default class Carousel extends React.Component {
     const xDist = x1 - x2;
     const yDist = y1 - y2;
     const r = Math.atan2(yDist, xDist);
-    let swipeAngle = Math.round(r * 180 / Math.PI);
+    let swipeAngle = Math.round((r * 180) / Math.PI);
 
     if (swipeAngle < 0) {
       swipeAngle = 360 - Math.abs(swipeAngle);
@@ -472,7 +473,7 @@ export default class Carousel extends React.Component {
       return;
     }
     if (
-      this.state.currentSlide !==
+      this.props.slideIndex !==
       this.state.slideCount - this.state.slidesToShow
     ) {
       this.nextSlide();
@@ -510,23 +511,20 @@ export default class Carousel extends React.Component {
       if (!this.props.wrapAround) {
         return;
       }
+      //TODO fix wrap func
       if (index >= this.state.slideCount) {
-        this.props.beforeSlide(this.state.currentSlide, 0);
+        this.props.beforeSlide(this.props.slideIndex, 0);
         this.setState(
           prevState => ({
             left: this.props.vertical
               ? 0
               : this.getTargetLeft(
                   this.state.slideWidth,
-                  prevState.currentSlide
+                  this.props.slideIndex
                 ),
             top: this.props.vertical
-              ? this.getTargetLeft(
-                  this.state.slideWidth,
-                  prevState.currentSlide
-                )
+              ? this.getTargetLeft(this.state.slideWidth, this.props.slideIndex)
               : 0,
-            currentSlide: 0,
             isWrappingAround: true,
             wrapToIndex: index
           }),
@@ -545,16 +543,16 @@ export default class Carousel extends React.Component {
         return;
       } else {
         const endSlide = this.state.slideCount - this.state.slidesToScroll;
-        this.props.beforeSlide(this.state.currentSlide, endSlide);
+        this.props.beforeSlide(this.props.slideIndex, endSlide);
         this.setState(
           prevState => ({
             left: this.props.vertical
               ? 0
-              : this.getTargetLeft(0, prevState.currentSlide),
+              : this.getTargetLeft(0, this.props.slideIndex),
             top: this.props.vertical
-              ? this.getTargetLeft(0, prevState.currentSlide)
+              ? this.getTargetLeft(0, this.props.slideIndex)
               : 0,
-            currentSlide: endSlide,
+            //currentSlide: endSlide,
             isWrappingAround: true,
             wrapToIndex: index
           }),
@@ -574,19 +572,13 @@ export default class Carousel extends React.Component {
       }
     }
 
-    this.props.beforeSlide(this.state.currentSlide, index);
+    this.props.beforeSlide(this.props.slideIndex, index);
 
-    if (index !== this.state.currentSlide) {
+    if (index !== this.props.slideIndex) {
       this.props.afterSlide(index);
     }
-    this.setState(
-      {
-        currentSlide: index
-      },
-      () => {
-        this.resetAutoplay();
-      }
-    );
+
+    this.resetAutoplay();
   }
 
   nextSlide() {
@@ -598,7 +590,7 @@ export default class Carousel extends React.Component {
     }
 
     if (
-      this.state.currentSlide >= childrenCount - slidesToShow &&
+      this.props.slideIndex >= childrenCount - slidesToShow &&
       !this.props.wrapAround &&
       this.props.cellAlign === 'left'
     ) {
@@ -606,13 +598,13 @@ export default class Carousel extends React.Component {
     }
 
     if (this.props.wrapAround) {
-      this.goToSlide(this.state.currentSlide + this.state.slidesToScroll);
+      this.goToSlide(this.props.slideIndex + this.state.slidesToScroll);
     } else {
       if (this.props.slideWidth !== 1) {
-        this.goToSlide(this.state.currentSlide + this.state.slidesToScroll);
+        this.goToSlide(this.props.slideIndex + this.state.slidesToScroll);
         return;
       }
-      const offset = this.state.currentSlide + this.state.slidesToScroll;
+      const offset = this.props.slideIndex + this.state.slidesToScroll;
       const nextSlideIndex =
         this.props.cellAlign !== 'left'
           ? offset
@@ -622,15 +614,15 @@ export default class Carousel extends React.Component {
   }
 
   previousSlide() {
-    if (this.state.currentSlide <= 0 && !this.props.wrapAround) {
+    if (this.props.slideIndex <= 0 && !this.props.wrapAround) {
       return;
     }
 
     if (this.props.wrapAround) {
-      this.goToSlide(this.state.currentSlide - this.state.slidesToScroll);
+      this.goToSlide(this.props.slideIndex - this.state.slidesToScroll);
     } else {
       this.goToSlide(
-        Math.max(0, this.state.currentSlide - this.state.slidesToScroll)
+        Math.max(0, this.props.slideIndex - this.state.slidesToScroll)
       );
     }
   }
@@ -639,7 +631,7 @@ export default class Carousel extends React.Component {
 
   getTargetLeft(touchOffset, slide) {
     let offset;
-    const target = slide || this.state.currentSlide;
+    const target = slide || this.props.slideIndex;
     switch (this.state.cellAlign) {
       case 'left': {
         offset = 0;
@@ -661,7 +653,7 @@ export default class Carousel extends React.Component {
     let left = this.state.slideWidth * target;
 
     const lastSlide =
-      this.state.currentSlide > 0 &&
+      this.props.slideIndex > 0 &&
       target + this.state.slidesToScroll >= this.state.slideCount;
 
     if (
@@ -761,7 +753,7 @@ export default class Carousel extends React.Component {
       return this.findMaxHeightSlide(childNodes);
     }
     if (props.heightMode === 'current') {
-      return childNodes[this.state.currentSlide].offsetHeight;
+      return childNodes[this.props.slideIndex].offsetHeight;
     }
 
     return 100;
@@ -784,9 +776,9 @@ export default class Carousel extends React.Component {
     if (typeof props.slideWidth !== 'number') {
       slideWidth = parseInt(props.slideWidth);
     } else if (props.vertical) {
-      slideWidth = slideHeight / slidesToShow * props.slideWidth;
+      slideWidth = (slideHeight / slidesToShow) * props.slideWidth;
     } else {
-      slideWidth = frame.offsetWidth / slidesToShow * props.slideWidth;
+      slideWidth = (frame.offsetWidth / slidesToShow) * props.slideWidth;
     }
 
     if (!props.vertical) {
@@ -991,7 +983,7 @@ export default class Carousel extends React.Component {
       slideWidth: this.state.slideWidth,
       slideHeight: this.state.slideHeight,
       slideCount: this.state.slideCount,
-      currentSlide: this.state.currentSlide,
+      currentSlide: this.props.slideIndex,
       isWrappingAround: this.state.isWrappingAround,
       top: this.state.top,
       left: this.state.left,
@@ -1015,7 +1007,7 @@ export default class Carousel extends React.Component {
             key={key}
           >
             {func({
-              currentSlide: this.state.currentSlide,
+              currentSlide: this.props.slideIndex,
               slideCount: this.state.slideCount,
               frameWidth: this.state.frameWidth,
               slideWidth: this.state.slideWidth,
@@ -1025,7 +1017,8 @@ export default class Carousel extends React.Component {
               wrapAround: this.props.wrapAround,
               nextSlide: () => this.nextSlide(),
               previousSlide: () => this.previousSlide(),
-              goToSlide: index => this.goToSlide(index)
+              goToSlide: index => this.goToSlide(index),
+              onSlideIndexUpdate: index => this.props.onSlideIndexUpdate(index)
             })}
           </div>
         )
@@ -1095,6 +1088,7 @@ export default class Carousel extends React.Component {
 
 Carousel.propTypes = {
   afterSlide: PropTypes.func,
+  onSlideIndexUpdate: PropTypes.func,
   autoplay: PropTypes.bool,
   autoplayInterval: PropTypes.number,
   autoGenerateStyleTag: PropTypes.bool,
@@ -1162,7 +1156,8 @@ Carousel.defaultProps = {
   swiping: true,
   vertical: false,
   width: '100%',
-  wrapAround: false
+  wrapAround: false,
+  onSlideIndexUpdate() {}
 };
 
 export { NextButton, PreviousButton, PagingDots };
