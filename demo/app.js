@@ -12,15 +12,9 @@ class App extends React.Component {
       length: 6,
       cellAlign: 'left'
     };
-
-    this.handleImageClick = this.handleImageClick.bind(this);
   }
 
-  handleImageClick() {
-    this.setState({ underlineHeader: !this.state.underlineHeader });
-  }
-
-    handleSlideIndexUpdate = index => {
+  handleSlideIndexUpdate = index => {
     console.log('update', index);
     this.setState({ slideIndex: index });
 
@@ -33,7 +27,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div style={{ width: '100%', margin: 'auto' }}>
+      <div>
         <Carousel
           transitionMode={this.state.transitionMode}
           cellAlign={this.state.cellAlign}
