@@ -14,7 +14,7 @@ class App extends React.Component {
     };
   }
 
-  handleSlideIndexUpdate = index => {
+  handleChangeIndex = index => {
     console.log('update', index);
     this.setState({ slideIndex: index });
 
@@ -37,7 +37,7 @@ class App extends React.Component {
           slideWidth="280px"
           renderCenterLeftControls={() => null}
           renderCenterRightControls={() => null}
-          onSlideIndexUpdate={this.handleSlideIndexUpdate}
+          onChangeIndex={this.handleChangeIndex}
           afterSlide={this.handleAfterSlide}
         >
           {colors.slice(0, this.state.length).map((color, index) => (
@@ -45,7 +45,7 @@ class App extends React.Component {
               <img
                 src={`http://placehold.it/400x400/${color}/ffffff/&text=slide ${index}`}
                 key={color}
-                onClick={() => this.handleSlideIndexUpdate(index)}
+                onClick={() => this.handleChangeIndex(index)}
               />
             </div>
           ))}
@@ -53,10 +53,7 @@ class App extends React.Component {
         <div>
           <div>
             {[...new Array(6).values()].map((item, index) => (
-              <button
-                key={index}
-                onClick={() => this.handleSlideIndexUpdate(index)}
-              >
+              <button key={index} onClick={() => this.handleChangeIndex(index)}>
                 {index}
               </button>
             ))}

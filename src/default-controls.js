@@ -110,7 +110,7 @@ export class PagingDots extends React.Component {
             <li style={this.getListItemStyles()} key={index}>
               <button
                 style={this.getButtonStyles(this.props.currentSlide === index)}
-                onClick={(e) => this.props.onSlideIndexUpdate(index)}
+                onClick={(e) => this.props.onChangeIndex(index)}
               >
                 &bull;
               </button>

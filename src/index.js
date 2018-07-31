@@ -417,14 +417,14 @@ export default class Carousel extends React.Component {
         ) {
           this.setState({ easing: easing[this.props.edgeEasing] });
         } else {
-          this.props.onSlideIndexUpdate(this.props.slideIndex + 1);
+          this.props.onChangeIndex(this.props.slideIndex + 1);
         }
       } else if (this.touchObject.direction === -1) {
         if (this.props.slideIndex <= 0 && !this.props.wrapAround) {
           this.setState({ easing: easing[this.props.edgeEasing] });
         } else {
           //this.previousSlide();
-          this.props.onSlideIndexUpdate(this.props.slideIndex - 1);
+          this.props.onChangeIndex(this.props.slideIndex - 1);
         }
       }
     } else {
@@ -1018,7 +1018,7 @@ export default class Carousel extends React.Component {
               nextSlide: () => this.nextSlide(),
               previousSlide: () => this.previousSlide(),
               goToSlide: index => this.goToSlide(index),
-              onSlideIndexUpdate: index => this.props.onSlideIndexUpdate(index)
+              onChangeIndex: index => this.props.onChangeIndex(index)
             })}
           </div>
         )
@@ -1088,7 +1088,7 @@ export default class Carousel extends React.Component {
 
 Carousel.propTypes = {
   afterSlide: PropTypes.func,
-  onSlideIndexUpdate: PropTypes.func,
+  onChangeIndex: PropTypes.func,
   autoplay: PropTypes.bool,
   autoplayInterval: PropTypes.number,
   autoGenerateStyleTag: PropTypes.bool,
@@ -1157,7 +1157,7 @@ Carousel.defaultProps = {
   vertical: false,
   width: '100%',
   wrapAround: false,
-  onSlideIndexUpdate() {}
+  onChangeIndex() {}
 };
 
 export { NextButton, PreviousButton, PagingDots };
