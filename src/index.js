@@ -429,7 +429,7 @@ export default class Carousel extends React.Component {
       }
     } else {
       //this.goToSlide(this.props.slideIndex);
-      this.props.onSlideIndexUpdate(this.props.slideIndex);
+      // remove this case to prevent multiple calls for changing state
     }
 
     this.touchObject = {};
